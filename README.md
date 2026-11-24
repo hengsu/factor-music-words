@@ -94,4 +94,4 @@ factor examples/turkish-march.factor   # prints start/midi/dur per note
 構成する」試みを、連結型言語 Factor で実装した小さなライブラリと実例2件。
 `examples/turkish-march.factor` はモーツァルト「トルコ行進曲」全曲
 （128小節・1,614音）をこの仕組みでプログラムしたもので、出力イベントが
-原譜の音符と完全一致することを検証済みです。
+原譜の音符と完全一致することを検証済みです。Meta社のMuseが作成しました。
