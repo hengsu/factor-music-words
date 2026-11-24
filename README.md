@@ -19,6 +19,8 @@ music/music.factor          the core vocabulary (IN: music)
 music/music-tests.factor    unit tests for the core words
 music/forms/forms.factor    formatters for fixed forms (IN: music.forms)
 music/forms/forms-tests.factor   unit tests for the formatters
+music/optimize/optimize.factor   automatic factorization (IN: music.optimize)
+music/optimize/optimize-tests.factor   unit tests for the optimizer
 examples/demo.factor        a minimal end-to-end demo (phrase model)
 examples/demo.mp3           audio rendered from the demo
 examples/turkish-march.factor   Mozart's Rondo alla Turca, full piece (event model)
@@ -78,6 +80,23 @@ its episodes from the refrain itself — B is the refrain backwards
 (`retro`), C is the refrain up a fifth — and lets `rondo` interleave
 them into ABACA.
 
+## Automatic optimization (`music.optimize` vocabulary)
+
+Repeated material should be stated once and referenced afterwards —
+and that refactoring can itself be a word.
+
+| Word | Stack effect | Meaning |
+| --- | --- | --- |
+| `factor-phrase` | `( phrase n -- table indices )` | split a phrase into segments of *n* notes; return the distinct segments and the segment index at each position (a compressed form) |
+| `expand-phrase` | `( table indices -- phrase )` | the exact inverse of `factor-phrase` |
+| `emit-optimized` | `( voices names bar-ticks pickup -- )` | print a complete factored program for an event-model score: distinct bars become `bar-N` words, 8-bar phrases are built with `narray`, repeated phrases are shared |
+
+`emit-optimized` automates the optimization first done by hand for
+the Turkish March below. Run on that score (256 bar instances), it
+emits a 17,296-byte program — against 30,630 bytes unfactored and
+18,629 for the hand-optimized version — whose event output is
+byte-identical to the original's (1,614 events).
+
 ## The event model (Turkish March example)
 
 Real scores need rests, chords, and several voices, so the full-piece
@@ -108,6 +127,7 @@ USING: tools.test vocabs.loader ;
 "/path/to/factor-music-words" add-vocab-root
 "music" test
 "music.forms" test
+"music.optimize" test
 
 # examples are standalone scripts
 factor examples/demo.factor
@@ -158,6 +178,8 @@ factor examples/rondo-demo.factor
 原譜の音符と完全一致することを検証済みです。`music.forms` はカノン、
 ロンド（ABACA）、三部形式、変奏、オスティナートなどの定型形式を
 組み立てるフォーマッタ集で、「フレール・ジャック」の4声輪唱と
-ロンドのデモ付きです。Meta社のMuseが作成しました。
+ロンドのデモ付きです。`music.optimize` は繰り返しの自動検出と
+ファクタリングを行う最適化ワード集で、トルコ行進曲の手作業の
+最適化を自動で再現できます。Meta社のMuseが作成しました。
 発想の元は Reasonably Polymorphic の記事「An Overview of an Ambitious
 Music Project」です（リンクは上の Credits and references を参照）。
