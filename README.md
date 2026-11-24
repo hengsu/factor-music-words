@@ -17,10 +17,13 @@ composition, quotations are first-class, and combinators (`map`, `bi`,
 ```
 music/music.factor          the core vocabulary (IN: music)
 music/music-tests.factor    unit tests for the core words
+music/music-docs.factor     help documentation for the core words
 music/forms/forms.factor    formatters for fixed forms (IN: music.forms)
 music/forms/forms-tests.factor   unit tests for the formatters
+music/forms/forms-docs.factor    help documentation for the formatters
 music/optimize/optimize.factor   automatic factorization (IN: music.optimize)
 music/optimize/optimize-tests.factor   unit tests for the optimizer
+music/optimize/optimize-docs.factor  help documentation for the optimizer
 examples/demo.factor        a minimal end-to-end demo (phrase model)
 examples/demo.mp3           audio rendered from the demo
 examples/turkish-march.factor   Mozart's Rondo alla Turca, full piece (event model)
