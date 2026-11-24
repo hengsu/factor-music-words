@@ -80,6 +80,30 @@ factor examples/demo.factor
 factor examples/turkish-march.factor   # prints start/midi/dur per note
 ```
 
+## Credits and references
+
+- **Created with Muse.** All of the code in this repository — the
+  `music` vocabulary, its tests, both examples, and the verification
+  that the Turkish March program's events match the source score —
+  was written and checked on 2026-11-24 in conversation with Muse,
+  Meta's personal AI agent.
+- **Originating idea:** Sandy Maguire, "An Overview of an Ambitious
+  Music Project", *Reasonably Polymorphic*, 2026-11-02 —
+  <https://reasonablypolymorphic.com/blog/music-overview/>
+  The post sets out to build a constructive theory of music as a
+  Haskell combinator library, under three desiderata: express any
+  music without assuming 12 pitch classes or harmonic function; make
+  it easy to get good results through musically meaningful
+  combinators; and make understanding the system teach you something
+  about music. This repository is a small experiment in whether the
+  same approach works in Factor.
+- **The lineage that post draws on:**
+  - Simon Peyton Jones, Jean-Marc Eber, Julian Seward, "Composing
+    Contracts: An Adventure in Financial Engineering" (ICFP 2000) —
+    <https://www.lexifi.com/pdf/contracts.pdf>
+  - Brent Yorgey et al., *diagrams*, a declarative vector-graphics
+    combinator library in Haskell — <https://diagrams.github.io/>
+
 ## Licenses
 
 - Code: MIT (see `LICENSE`).
@@ -95,3 +119,5 @@ factor examples/turkish-march.factor   # prints start/midi/dur per note
 `examples/turkish-march.factor` はモーツァルト「トルコ行進曲」全曲
 （128小節・1,614音）をこの仕組みでプログラムしたもので、出力イベントが
 原譜の音符と完全一致することを検証済みです。Meta社のMuseが作成しました。
+発想の元は Reasonably Polymorphic の記事「An Overview of an Ambitious
+Music Project」です（リンクは上の Credits and references を参照）。
