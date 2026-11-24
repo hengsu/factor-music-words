@@ -50,6 +50,9 @@ assumed: `1` is the tonic, `9/8` a whole tone, `5/4` a just major third,
 | `total-dur` | `( phrase -- dur )` | total length in beats |
 | `freqs` | `( phrase base -- freqs )` | absolute frequencies for a base (e.g. A=440) |
 
+(`transpose-note` and `stretch-note` are the per-note helpers behind
+`up` and `augment`.)
+
 The demo builds a four-note motif (`1, 9/8, 5/4, 3/2`), sequences it with
 itself transposed up a fifth, and finishes with the retrograde — ten
 beats in all.
@@ -142,8 +145,8 @@ factor examples/rondo-demo.factor
   `music` vocabulary, its tests, the examples, and the verification
   that the Turkish March program's events match the source score —
   was written and checked on 2026-11-24 in conversation with Muse,
-  Meta's personal AI agent. The `music.forms` formatters and their
-  demos followed on 2026-11-25.
+  Meta's personal AI agent. The `music.forms` formatters, their
+  demos, and the `music.optimize` vocabulary followed on 2026-11-25.
 - **Originating idea:** Sandy Maguire, "An Overview of an Ambitious
   Music Project", *Reasonably Polymorphic*, 2026-11-02 —
   <https://reasonablypolymorphic.com/blog/music-overview/>
