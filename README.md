@@ -30,6 +30,9 @@ music/midi/midi-docs.factor    help documentation for the MIDI converter
 music/musicxml/musicxml.factor   MusicXML file input (IN: music.musicxml)
 music/musicxml/musicxml-tests.factor   unit tests for the MusicXML converter
 music/musicxml/musicxml-docs.factor    help documentation for the MusicXML converter
+music/abc/abc.factor        ABC notation input (IN: music.abc)
+music/abc/abc-tests.factor   unit tests for the ABC converter
+music/abc/abc-docs.factor    help documentation for the ABC converter
 examples/demo.factor        a minimal end-to-end demo (phrase model)
 examples/demo.mp3           audio rendered from the demo
 examples/turkish-march.factor   Mozart's Rondo alla Turca, full piece (event model)
@@ -148,6 +151,28 @@ the part's event stream. Verified on a full Turkish March document
 (256 measures): the resulting score feeds `emit-optimized` to a
 program byte-identical to the one produced from the MIDI file.
 
+## ABC notation input (`music.abc` vocabulary)
+
+Reads tunes in ABC notation (the text format of abcnotation.com)
+into the same event model:
+
+| Word | Stack effect | Meaning |
+|---|---|---|
+| `abc>score` | `( string -- voices )` | parse an ABC tune from a string → voices of bars |
+| `abc-file>score` | `( path -- voices )` | read an ABC file → voices of bars |
+
+Header fields `L:` (default note length) and `K:` (key signature —
+major, minor, dorian, mixolydian, lydian, phrygian and locrian) are
+honoured; several voices are declared with `V:` fields. Accidentals
+persist within the bar; note lengths are numbers and fractions of
+the `L:` unit; rests, chords, ties, tuplets and broken rhythm
+(`>` and `<`) are handled; grace notes, quoted chord symbols and
+decorations are skipped. Unlike the other two inputs, repeats are
+performed: `|: :|` sections are expanded, with first and second
+endings, and `[K:...]` fields change the key mid-tune. Verified
+against the canon demo: Frère Jacques written in ABC with repeats
+produces exactly the demo tune's 32 events.
+
 ## The event model (Turkish March example)
 
 Real scores need rests, chords, and several voices, so the full-piece
@@ -181,6 +206,7 @@ USING: tools.test vocabs.loader ;
 "music.optimize" test
 "music.midi" test
 "music.musicxml" test
+"music.abc" test
 
 # examples are standalone scripts
 factor examples/demo.factor
@@ -196,8 +222,8 @@ factor examples/rondo-demo.factor
   that the Turkish March program's events match the source score —
   was written and checked on 2026-11-24 in conversation with Muse,
   Meta's personal AI agent. The `music.forms` formatters, their
-  demos, and the `music.optimize`, `music.midi` and `music.musicxml`
-  vocabularies followed on 2026-11-25.
+  demos, and the `music.optimize`, `music.midi`, `music.musicxml`
+  and `music.abc` vocabularies followed on 2026-11-25.
 - **Originating idea:** Sandy Maguire, "An Overview of an Ambitious
   Music Project", *Reasonably Polymorphic*, 2026-11-02 —
   <https://reasonablypolymorphic.com/blog/music-overview/>
@@ -239,7 +265,9 @@ factor examples/rondo-demo.factor
 入力層で、MIDI → 最適化プログラムの全経路をトルコ行進曲で検証済みです。
 `music.musicxml` は MusicXML（score-partwise）を読む入力層で、タイの
 結合、和音、backup/forward による複数声部にも対応し、同じイベント
-モデルに変換します。
+モデルに変換します。`music.abc` は ABC記譜法を読む入力層で、調号
+（長調・短調・各旋法）、小節内のみ有効な臨時記号、連符、ブロークン・
+リズムに対応し、反復記号は1番・2番カッコを含めて展開します。
 Meta社のMuseが作成しました。
 発想の元は Reasonably Polymorphic の記事「An Overview of an Ambitious
 Music Project」です（リンクは上の Credits and references を参照）。
