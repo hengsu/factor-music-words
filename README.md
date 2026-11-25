@@ -33,6 +33,9 @@ music/musicxml/musicxml-docs.factor    help documentation for the MusicXML conve
 music/abc/abc.factor        ABC notation input (IN: music.abc)
 music/abc/abc-tests.factor   unit tests for the ABC converter
 music/abc/abc-docs.factor    help documentation for the ABC converter
+music/scor/scor.factor      SCORE (PMX) input (IN: music.scor)
+music/scor/scor-tests.factor   unit tests for the PMX converter
+music/scor/scor-docs.factor    help documentation for the PMX converter
 examples/demo.factor        a minimal end-to-end demo (phrase model)
 examples/demo.mp3           audio rendered from the demo
 examples/turkish-march.factor   Mozart's Rondo alla Turca, full piece (event model)
@@ -173,6 +176,38 @@ endings, and `[K:...]` fields change the key mid-tune. Verified
 against the canon demo: Frère Jacques written in ABC with repeats
 produces exactly the demo tune's 32 events.
 
+## SCORE (PMX) input (`music.scor` vocabulary)
+
+Reads PMX, the ASCII form of SCORE data, into the same event model:
+
+| Word | Stack effect | Meaning |
+|---|---|---|
+| `scor>score` | `( string -- voices )` | parse PMX text from a string → voices of bars |
+| `scor-file>score` | `( path -- voices )` | read a PMX file → voices of bars |
+
+SCORE, written by Leland Smith at Stanford, began in 1967 as an
+input language for MUSIC V, produced the first complete
+computer-typeset work in 1971, and was a commercial engraving
+product from 1987 to its final release in 2013; publishers such as
+Schott used it for decades, and research centres such as CCARH hold
+very large corpora engraved in it. Those corpora are the reason to
+read SCORE today — but its data is graphical, not logical: a note
+is a horizontal position on the page (P3), a diatonic staff
+position (P4) and a duration (P7). This vocabulary reconstructs
+pitch from staff position, clef (treble/bass/alto/tenor), key
+signature and the accidental packed into P5, with accidentals
+persisting within the bar, and rebuilds time from the order of
+positions within each bar, so archival SCORE pages become music
+that can be analysed, played and re-factored like any other input.
+Suggested use: obtain PMX with SCORE's own PMX command or by
+converting binary .MUS/.PAG files with scorelib, read it with
+`scor-file>score`, and archive the result as an `emit-optimized`
+program. One rhythmic voice per staff is assumed; grace notes are
+skipped and slurs joining equal pitches are merged as ties.
+Verified on real published data: the PMX for the subject of Bach's
+Fugue in C minor, BWV 847, from the Wikipedia article on SCORE
+reproduces the subject exactly, accidentals included.
+
 ## The event model (Turkish March example)
 
 Real scores need rests, chords, and several voices, so the full-piece
@@ -207,6 +242,7 @@ USING: tools.test vocabs.loader ;
 "music.midi" test
 "music.musicxml" test
 "music.abc" test
+"music.scor" test
 
 # examples are standalone scripts
 factor examples/demo.factor
@@ -222,8 +258,8 @@ factor examples/rondo-demo.factor
   that the Turkish March program's events match the source score —
   was written and checked on 2026-11-24 in conversation with Muse,
   Meta's personal AI agent. The `music.forms` formatters, their
-  demos, and the `music.optimize`, `music.midi`, `music.musicxml`
-  and `music.abc` vocabularies followed on 2026-11-25.
+  demos, and the `music.optimize`, `music.midi`, `music.musicxml`,
+  `music.abc` and `music.scor` vocabularies followed on 2026-11-25.
 - **Originating idea:** Sandy Maguire, "An Overview of an Ambitious
   Music Project", *Reasonably Polymorphic*, 2026-11-02 —
   <https://reasonablypolymorphic.com/blog/music-overview/>
@@ -268,6 +304,21 @@ factor examples/rondo-demo.factor
 モデルに変換します。`music.abc` は ABC記譜法を読む入力層で、調号
 （長調・短調・各旋法）、小節内のみ有効な臨時記号、連符、ブロークン・
 リズムに対応し、反復記号は1番・2番カッコを含めて展開します。
+`music.scor` は SCORE のテキスト形式 PMX を読む入力層です。SCORE は
+スタンフォード大学の Leland Smith が作った楽譜浄書システムで、1967年に
+MUSIC V の入力言語として始まり、1971年にはコンピュータで浄書された
+最初の全曲作品を生み、1987年から2013年の最終版まで商用製品として
+Schott 社など多くの出版社の版を支えました。CCARH をはじめ研究機関には
+SCORE で浄書された膨大な楽譜コーパスが残っており、それを再利用できる
+ことがこの入力層の有用性です。ただし SCORE のデータは論理的ではなく
+図形的（音符＝ページ上の水平位置・五線上の位置・長さ）なので、本
+ボキャブラリが音高（音部記号・調号・P5 に詰め込まれた臨時記号から）と
+時刻（小節内の位置の順序から）を再構成してイベントモデルに変換します。
+利用方法の提案：SCORE 本体の PMX コマンドか、オープンソースの
+scorelib でバイナリ（.MUS/.PAG）を PMX に変換し、`scor-file>score` で
+読み、`emit-optimized` のプログラムとして保存するのが、アーカイブの
+活用に適します。検証は Wikipedia の SCORE 記事に掲載された実データ
+（バッハ BWV 847 フーガ主題）で、臨時記号まで含めて一致しました。
 Meta社のMuseが作成しました。
 発想の元は Reasonably Polymorphic の記事「An Overview of an Ambitious
 Music Project」です（リンクは上の Credits and references を参照）。
