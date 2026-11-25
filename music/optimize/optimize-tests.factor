@@ -1,4 +1,4 @@
-USING: kernel music.optimize tools.test ;
+USING: kernel music.optimize sequences tools.test ;
 IN: music.optimize.tests
 
 ! factor-phrase at n = 1: three distinct notes, indices in order

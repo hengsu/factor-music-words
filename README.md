@@ -24,6 +24,9 @@ music/forms/forms-docs.factor    help documentation for the formatters
 music/optimize/optimize.factor   automatic factorization (IN: music.optimize)
 music/optimize/optimize-tests.factor   unit tests for the optimizer
 music/optimize/optimize-docs.factor  help documentation for the optimizer
+music/midi/midi.factor      MIDI file input (IN: music.midi)
+music/midi/midi-tests.factor   unit tests for the MIDI converter
+music/midi/midi-docs.factor    help documentation for the MIDI converter
 examples/demo.factor        a minimal end-to-end demo (phrase model)
 examples/demo.mp3           audio rendered from the demo
 examples/turkish-march.factor   Mozart's Rondo alla Turca, full piece (event model)
@@ -103,6 +106,26 @@ emits a 17,296-byte program — against 30,630 bytes unfactored and
 18,629 for the hand-optimized version — whose event output is
 byte-identical to the original's (1,614 events).
 
+## MIDI input (`music.midi` vocabulary)
+
+A conversion layer on top of Factor's bundled `midi` vocabulary,
+which parses Standard MIDI Files. These words turn its delta-timed
+events into the array models used here:
+
+| Word | Stack effect | Meaning |
+|---|---|---|
+| `track>notes` | `( track -- notes )` | one track → `{ start midi dur }` events with absolute ticks, sorted by start (note-on with velocity 0 counts as note-off; overlapping notes of one pitch pair up FIFO) |
+| `midi>voices` | `( midi -- voices )` | every track of a parsed file → one note array per track |
+| `midi>division` | `( midi -- division )` | the file's ticks per quarter note |
+| `file>voices` | `( path -- voices )` | read a MIDI file → voices of absolute-tick notes |
+| `events>bars` | `( notes bar-ticks pickup -- bars )` | group absolute-tick notes into bars (bar 0 is the pickup bar); starts become bar-relative, silent bars stay empty |
+| `file>score` | `( path bar-ticks pickup -- voices )` | read a MIDI file → voices of bars, ready for `emit-optimized` |
+
+The whole pipeline — MIDI file → `file>score` → `emit-optimized` →
+factored program — was verified on the Turkish March: the emitted
+program's event output is byte-identical to the golden output
+(1,614 events).
+
 ## The event model (Turkish March example)
 
 Real scores need rests, chords, and several voices, so the full-piece
@@ -134,6 +157,7 @@ USING: tools.test vocabs.loader ;
 "music" test
 "music.forms" test
 "music.optimize" test
+"music.midi" test
 
 # examples are standalone scripts
 factor examples/demo.factor
@@ -149,7 +173,8 @@ factor examples/rondo-demo.factor
   that the Turkish March program's events match the source score —
   was written and checked on 2026-11-24 in conversation with Muse,
   Meta's personal AI agent. The `music.forms` formatters, their
-  demos, and the `music.optimize` vocabulary followed on 2026-11-25.
+  demos, and the `music.optimize` and `music.midi` vocabularies
+  followed on 2026-11-25.
 - **Originating idea:** Sandy Maguire, "An Overview of an Ambitious
   Music Project", *Reasonably Polymorphic*, 2026-11-02 —
   <https://reasonablypolymorphic.com/blog/music-overview/>
@@ -186,6 +211,9 @@ factor examples/rondo-demo.factor
 組み立てるフォーマッタ集で、「フレール・ジャック」の4声輪唱と
 ロンドのデモ付きです。`music.optimize` は繰り返しの自動検出と
 ファクタリングを行う最適化ワード集で、トルコ行進曲の手作業の
-最適化を自動で再現できます。Meta社のMuseが作成しました。
+最適化を自動で再現できます。`music.midi` は Standard MIDI ファイルを
+読み込み、トラックを音符イベントの配列や小節単位のスコアに変換する
+入力層で、MIDI → 最適化プログラムの全経路をトルコ行進曲で検証済みです。
+Meta社のMuseが作成しました。
 発想の元は Reasonably Polymorphic の記事「An Overview of an Ambitious
 Music Project」です（リンクは上の Credits and references を参照）。
